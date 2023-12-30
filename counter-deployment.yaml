@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter
+  template:
+    metadata:
+      labels:
+        app: counter
+    spec:
+      containers:
+        - name: counter-container
+          image: ekaghnimukherjee/counter_trial_7:v9
+          env: 
+            - name: COUNT_FOLDER
+              valueFrom : 
+                configMapKeyRef : 
+                  name: counter-env
+                  key: folder
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: counter-storage
+              mountPath: /data/counter-data
+      volumes:
+        - name: counter-storage
+          persistentVolumeClaim:
+            claimName: counter-pvc
+
